@@ -16,30 +16,27 @@
 
 package com.seunghyo.storemoa;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 public class SuperAwesomeCardFragment extends Fragment {
 
@@ -66,28 +63,24 @@ public class SuperAwesomeCardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //handler.sendEmptyMessage(0);
         position = getArguments().getInt(ARG_POSITION);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-
+        new MyAsyncTask().execute();
         final View rootView;
 
         rootView = inflater.inflate(R.layout.main, container, false);
         rootView.setBackgroundColor(Color.WHITE);
         ListView listView = (ListView) rootView.findViewById(R.id.list);
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
-        //CustomList customList = new CustomList(getActivity());
-        listView.setAdapter(adapter);
-        new MyAsyncTask().execute();
+        CustomList customList = new CustomList(getActivity());
+        listView.setAdapter(customList);
         return rootView;
     }
 
-    /*public class CustomList extends ArrayAdapter<String> {
+    public class CustomList extends ArrayAdapter<String> {
 
         private final Activity context;
         public CustomList(Activity context ) {
@@ -106,7 +99,7 @@ public class SuperAwesomeCardFragment extends Fragment {
             price.setText(product_price.get(position));
             return rowView;
         }
-    }*/
+    }
 
     class MyAsyncTask extends AsyncTask<String, Void, ArrayList<String>>
     {
@@ -132,11 +125,11 @@ public class SuperAwesomeCardFragment extends Fragment {
                 reset = stmt.executeQuery(query);
                 int i=0;
                 while (reset.next()) {
-                    i++;
                     if (isCancelled()) break;
-                    final String str =reset.getString(1) + reset.getString(2);
-                    list.add(str);
-                    Util.getInstance().printLog(DEBUG,TAG,"number is: " + i +" String is: "+ str);
+                    product_name.add(i, reset.getString(1));
+                    product_price.add(i, reset.getString(2));
+                    Util.getInstance().printLog(DEBUG, TAG, "number is: " + i + " String is: " + product_name.get(i));
+                    i++;
                 }
                 conn.close();
             } catch (Exception e)
