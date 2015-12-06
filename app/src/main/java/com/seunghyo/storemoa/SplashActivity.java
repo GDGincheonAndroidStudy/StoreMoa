@@ -33,16 +33,14 @@ public class SplashActivity extends Activity {
 
         try
         {
-            new MyAsyncTask().execute();
             Thread.sleep(4000);
+
+            new MyAsyncTask().execute();
         }
         catch (InterruptedException e)
         {
             e.printStackTrace();
         }
-
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
     }
 
     class MyAsyncTask extends AsyncTask<String, Void, ArrayList<String>>
@@ -58,6 +56,9 @@ public class SplashActivity extends Activity {
             query = "select * from cu_price";
             ArrayList<String> list = new ArrayList<String>();
 
+            ArrayList<String> name =  new ArrayList<>();
+            ArrayList<String> price =  new ArrayList<>();
+
             ResultSet reset = null;
             Connection conn = null;
 
@@ -70,12 +71,25 @@ public class SplashActivity extends Activity {
                 int i=0;
                 while (reset.next()) {
                     if (isCancelled()) break;
-                    data.product_name.add(i, reset.getString(1));
-                    data.product_price.add(i, reset.getString(2));
-                    Util.getInstance().printLog(DEBUG, TAG, "number is: " + i + " String is: " + data.product_name.get(i));
+                    name.add(i, reset.getString(1));
+                    price.add(i, reset.getString(2));
+                    Util.getInstance()
+                            .printLog(DEBUG, TAG, "number is: " + i + " String is: " + name.get(i));
                     i++;
                 }
+
+                /**
+                 * 요부분에서 데이타에 밀어 넣는 겁니다.
+                 * 인스턴스를 들고 있어야 값이 사라지지 않아요
+                 */
+
+                if(name.size()>0){
+                    Data.getInstance().setProduct_name(name);
+                    Data.getInstance().setProduct_price(price);
+                }
+
                 conn.close();
+
             } catch (Exception e)
             {
                 Log.w("Error connection", "" + e.getMessage());
@@ -85,9 +99,19 @@ public class SplashActivity extends Activity {
 
         }
 
+        /**
+         * 여기가 어싱크가 끝나는 부분 입니다 어싱크는 비동기라 둬놓고 스레드 걸면 가끔 헛돌아요
+         *
+         * 어싱크가 끝난다 -> 파싱 & 모든 스플래시에서 받는 데이타들이 정상으로 들어 온다.
+         *
+         * 그러면 다음 메인 엑티비티를 실행해라 라는 구문이 더 좋습니다
+         * @param list
+         */
         @Override
         protected void onPostExecute(ArrayList<String> list) {
 
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            finish();
         }
 
         @Override

@@ -36,6 +36,7 @@ public class SuperAwesomeCardFragment extends Fragment {
     private String TAG = "SUperAwesomeCardFragment";
     Data data = new Data();
 
+
     public static SuperAwesomeCardFragment newInstance(int position) {
         SuperAwesomeCardFragment f = new SuperAwesomeCardFragment();
         Bundle b = new Bundle();
@@ -47,7 +48,10 @@ public class SuperAwesomeCardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Util.getInstance().printLog(DEBUG, TAG, String.valueOf(data.product_name.size()));
+        if(Data.getInstance().getProduct_price().size() >0) {
+            Util.getInstance().printLog(DEBUG, TAG, String.valueOf(Data.getInstance().getProduct_name()));
+        }
+
         position = getArguments().getInt(ARG_POSITION);
     }
 
@@ -66,7 +70,7 @@ public class SuperAwesomeCardFragment extends Fragment {
 
         private final Activity context;
         public CustomList(Activity context ) {
-            super(context, R.layout.listitem, data.product_name);
+            super(context, R.layout.listitem, Data.getInstance().getProduct_name());
             this.context = context;
         }
         @Override
@@ -76,9 +80,11 @@ public class SuperAwesomeCardFragment extends Fragment {
             ImageView imageView = (ImageView) rowView.findViewById(R.id.image);
             TextView title = (TextView) rowView.findViewById(R.id.title);
             TextView price = (TextView) rowView.findViewById(R.id.price);
-            title.setText(data.product_name.get(position));
+            String name_str = Data.getInstance().getProduct_name().get(position);
+            title.setText(name_str);
+            String price_str = Data.getInstance().getProduct_price().get(position);
             imageView.setImageResource(R.mipmap.ic_launcher);
-            price.setText(data.product_price.get(position));
+            price.setText(price_str);
             return rowView;
         }
     }
