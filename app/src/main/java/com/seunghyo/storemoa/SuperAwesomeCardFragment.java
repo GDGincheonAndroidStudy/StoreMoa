@@ -44,7 +44,7 @@ public class SuperAwesomeCardFragment extends Fragment {
     private boolean DEBUG = true;
     private String TAG = "SUperAwesomeCardFragment";
     String query;
-    Data data = new Data();
+
 
     public static SuperAwesomeCardFragment newInstance(int position) {
         SuperAwesomeCardFragment f = new SuperAwesomeCardFragment();
@@ -57,21 +57,31 @@ public class SuperAwesomeCardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Util.getInstance().printLog(DEBUG, TAG, String.valueOf(data.product_name.size()));
-        if(data.product_name.size() == 0) {
-            new MyAsyncTask().execute();
-        }
+        /*Util.getInstance().printLog(DEBUG, TAG,
+                String.valueOf(data.getInstance().getProduct_name().size()));
+        */
+
         position = getArguments().getInt(ARG_POSITION);
     }
-
+    ListView listView;
+    CustomList customList;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View rootView;
+
+
+
         rootView = inflater.inflate(R.layout.main, container, false);
         rootView.setBackgroundColor(Color.WHITE);
-        ListView listView = (ListView) rootView.findViewById(R.id.list);
-        CustomList customList = new CustomList(getActivity());
+        listView = (ListView) rootView.findViewById(R.id.list);
+         customList = new CustomList(getActivity());
         listView.setAdapter(customList);
+
+        if(Data.getInstance().getProduct_price().size() == 0) {
+            Util.getInstance().printLog(DEBUG,TAG,"INININ");
+            new MyAsyncTask().execute();
+        }
+
         return rootView;
     }
 
@@ -79,7 +89,7 @@ public class SuperAwesomeCardFragment extends Fragment {
 
         private final Activity context;
         public CustomList(Activity context ) {
-            super(context, R.layout.listitem, data.product_name);
+            super(context, R.layout.listitem, Data.getInstance().getProduct_name());
             this.context = context;
         }
         @Override
@@ -89,9 +99,9 @@ public class SuperAwesomeCardFragment extends Fragment {
             ImageView imageView = (ImageView) rowView.findViewById(R.id.image);
             TextView title = (TextView) rowView.findViewById(R.id.title);
             TextView price = (TextView) rowView.findViewById(R.id.price);
-            title.setText(data.product_name.get(position));
+            title.setText(Data.getInstance().getProduct_name().get(position));
             imageView.setImageResource(R.mipmap.ic_launcher);
-            price.setText(data.product_price.get(position));
+            price.setText(Data.getInstance().getProduct_price().get(position));
             return rowView;
         }
     }
@@ -100,14 +110,18 @@ public class SuperAwesomeCardFragment extends Fragment {
     {
         @Override
         protected void onPreExecute() {
+
             super.onPreExecute();
         }
 
         @Override
         protected ArrayList<String> doInBackground(String... params) {
-
+            Util.getInstance().printLog(DEBUG,TAG,"wow");
             query = "select * from cu_price";
             ArrayList<String> list = new ArrayList<String>();
+
+            ArrayList<String> price = new ArrayList<>();
+            ArrayList<String> name = new ArrayList<>();
 
             ResultSet reset = null;
             Connection conn = null;
@@ -121,9 +135,9 @@ public class SuperAwesomeCardFragment extends Fragment {
                 int i=0;
                 while (reset.next()) {
                     if (isCancelled()) break;
-                    data.product_name.add(i, reset.getString(1));
-                    data.product_price.add(i, reset.getString(2));
-                    Util.getInstance().printLog(DEBUG, TAG, "number is: " + i + " String is: " + data.product_name.get(i));
+                    name.add(i, reset.getString(1));
+                    price.add(i, reset.getString(2));
+                    Util.getInstance().printLog(DEBUG, TAG, "number is: " + i + " String is: " + name.get(i));
                     i++;
                 }
                 conn.close();
@@ -132,13 +146,24 @@ public class SuperAwesomeCardFragment extends Fragment {
                 Log.w("Error connection", "" + e.getMessage());
             }
 
+            if(price.size() > 0){
+                Util.getInstance().printLog(DEBUG,TAG,"is In!");
+                Data.getInstance().setProduct_name(name);
+                Data.getInstance().setProduct_price(price);
+            }
+
             return list;
 
         }
 
         @Override
         protected void onPostExecute(ArrayList<String> list) {
+            //customList.notifyDataSetChanged();
+            //listView.setAdapter(customList);
 
+            String str = Data.getInstance().getProduct_name().get(0);
+
+            Util.getInstance().printLog(DEBUG,TAG,"str is:" + str);
         }
 
         @Override
