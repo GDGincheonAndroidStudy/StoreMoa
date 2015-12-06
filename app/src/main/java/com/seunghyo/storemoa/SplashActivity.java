@@ -53,11 +53,25 @@ public class SplashActivity extends Activity {
         @Override
         protected ArrayList<String> doInBackground(String... params) {
 
-            query = "select * from cu_price";
+            query = "select * from total";
             ArrayList<String> list = new ArrayList<String>();
 
-            ArrayList<String> name =  new ArrayList<>();
-            ArrayList<String> price =  new ArrayList<>();
+            ArrayList<String> product_name = new ArrayList<>();
+            ArrayList<String> product_type = new ArrayList<>();
+            ArrayList<String> manufac = new ArrayList<>();
+            ArrayList<String> cu_price = new ArrayList<>();
+            ArrayList<String> gs_price = new ArrayList<>();
+            ArrayList<String> seven_price = new ArrayList<>();
+            ArrayList<String> past_cu_price = new ArrayList<>();
+            ArrayList<String> past_gs_price = new ArrayList<>();
+            ArrayList<String> past_seven_price = new ArrayList<>();
+            ArrayList<String> past_cu_change_date = new ArrayList<>();
+            ArrayList<String> past_gs_change_date = new ArrayList<>();
+            ArrayList<String> past_seven_change_date = new ArrayList<>();
+            ArrayList<String> sale_check = new ArrayList<>();
+            ArrayList<String> sale_content = new ArrayList<>();
+            ArrayList<String> grade = new ArrayList<>();
+            ArrayList<String> grade_content = new ArrayList<>();
 
             ResultSet reset = null;
             Connection conn = null;
@@ -71,10 +85,21 @@ public class SplashActivity extends Activity {
                 int i=0;
                 while (reset.next()) {
                     if (isCancelled()) break;
-                    name.add(i, reset.getString(1));
-                    price.add(i, reset.getString(2));
+                    product_name.add(i, reset.getString(1));
+                    product_type.add(i, reset.getString(2));
+                    manufac.add(i, reset.getString(3));
+                    cu_price.add(i, reset.getString(4));
+                    gs_price.add(i, reset.getString(5));
+                    seven_price.add(i, reset.getString(6));
+                    past_cu_price.add(i, reset.getString(7));
+                    past_gs_price.add(i, reset.getString(8));
+                    past_seven_price.add(i, reset.getString(9));
+                    past_cu_change_date.add(i, reset.getString(10));
+                    past_gs_change_date.add(i, reset.getString(11));
+                    past_seven_change_date.add(i, reset.getString(12));
+                    sale_content.add(i, reset.getString(13));
                     Util.getInstance()
-                            .printLog(DEBUG, TAG, "number is: " + i + " String is: " + name.get(i));
+                            .printLog(DEBUG, TAG, "number is: " + i + " String is: " + product_name.get(i));
                     i++;
                 }
 
@@ -83,13 +108,25 @@ public class SplashActivity extends Activity {
                  * 인스턴스를 들고 있어야 값이 사라지지 않아요
                  */
 
-                if(name.size()>0){
-                    Data.getInstance().setProduct_name(name);
-                    Data.getInstance().setProduct_price(price);
+                if(product_name.size()>0){
+                    Data.getInstance().setProduct_name(product_name);
+                    Data.getInstance().setProduct_type(product_type);
+                    Data.getInstance().setManufac(manufac);
+                    Data.getInstance().setCu_price(cu_price);
+                    Data.getInstance().setGs_price(gs_price);
+                    Data.getInstance().setSeven_price(seven_price);
+                    Data.getInstance().setPast_cu_price(past_cu_price);
+                    Data.getInstance().setPast_gs_price(past_gs_price);
+                    Data.getInstance().setPast_seven_price(past_seven_price);
+                    Data.getInstance().setPast_cu_change_date(past_cu_change_date);
+                    Data.getInstance().setPast_gs_change_date(past_gs_change_date);
+                    Data.getInstance().setPast_seven_change_date(past_seven_change_date);
+                    Data.getInstance().setSale_content(sale_content);
                 }
-
+                reset.close();
+                stmt.close();
                 conn.close();
-
+                Log.w("Success connection", "connclosed");
             } catch (Exception e)
             {
                 Log.w("Error connection", "" + e.getMessage());

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +16,6 @@ public class MainActivity extends FragmentActivity {
     private PagerSlidingTabStrip tabs;
     private ViewPager pager;
     private PagerAdapter adapter;
-    private RecyclerView recyclerView;
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -35,7 +33,7 @@ public class MainActivity extends FragmentActivity {
 
         pager.setAdapter(adapter);
 
-        final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, getResources()
+        final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, getResources()
                 .getDisplayMetrics());
         pager.setPageMargin(pageMargin);
 

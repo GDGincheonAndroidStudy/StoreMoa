@@ -10,17 +10,18 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
 
-    private final String[] TITLES = { "세븐일레븐", "CU", "GS25" };
+    private final String[] TITLES = {"세븐일레븐", "CU", "GS25"};
 
-    private final String[] TITLE = { "seven_price", "cu_price" , "gs_price"};
+    private final String[] TITLE = {"seven_price", "cu_price", "gs_price"};
 
     public PagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
+    public String getTitle(int i) { return  TITLE[i]; }
     @Override
     public CharSequence getPageTitle(int position) {
-        return TITLE[position];
+        return TITLES[position];
     }
 
     @Override
