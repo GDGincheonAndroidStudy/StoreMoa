@@ -20,8 +20,6 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,12 +43,8 @@ public class SuperAwesomeCardFragment extends Fragment {
     private int position;
     private boolean DEBUG = true;
     private String TAG = "SUperAwesomeCardFragment";
-    ArrayAdapter<String> adapter;
-    MyAsyncTask mTask;
     String query;
-
-    ArrayList<String> product_name = new ArrayList<String>();
-    ArrayList<String> product_price = new ArrayList<String>();
+    Data data = new Data();
 
     public static SuperAwesomeCardFragment newInstance(int position) {
         SuperAwesomeCardFragment f = new SuperAwesomeCardFragment();
@@ -63,18 +57,19 @@ public class SuperAwesomeCardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Util.getInstance().printLog(DEBUG, TAG, String.valueOf(data.product_name.size()));
+        if(data.product_name.size() == 0) {
+            new MyAsyncTask().execute();
+        }
         position = getArguments().getInt(ARG_POSITION);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        new MyAsyncTask().execute();
         final View rootView;
-
         rootView = inflater.inflate(R.layout.main, container, false);
         rootView.setBackgroundColor(Color.WHITE);
         ListView listView = (ListView) rootView.findViewById(R.id.list);
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
         CustomList customList = new CustomList(getActivity());
         listView.setAdapter(customList);
         return rootView;
@@ -84,7 +79,7 @@ public class SuperAwesomeCardFragment extends Fragment {
 
         private final Activity context;
         public CustomList(Activity context ) {
-            super(context, R.layout.listitem, product_name);
+            super(context, R.layout.listitem, data.product_name);
             this.context = context;
         }
         @Override
@@ -94,9 +89,9 @@ public class SuperAwesomeCardFragment extends Fragment {
             ImageView imageView = (ImageView) rowView.findViewById(R.id.image);
             TextView title = (TextView) rowView.findViewById(R.id.title);
             TextView price = (TextView) rowView.findViewById(R.id.price);
-            title.setText(product_name.get(position));
+            title.setText(data.product_name.get(position));
             imageView.setImageResource(R.mipmap.ic_launcher);
-            price.setText(product_price.get(position));
+            price.setText(data.product_price.get(position));
             return rowView;
         }
     }
@@ -126,9 +121,9 @@ public class SuperAwesomeCardFragment extends Fragment {
                 int i=0;
                 while (reset.next()) {
                     if (isCancelled()) break;
-                    product_name.add(i, reset.getString(1));
-                    product_price.add(i, reset.getString(2));
-                    Util.getInstance().printLog(DEBUG, TAG, "number is: " + i + " String is: " + product_name.get(i));
+                    data.product_name.add(i, reset.getString(1));
+                    data.product_price.add(i, reset.getString(2));
+                    Util.getInstance().printLog(DEBUG, TAG, "number is: " + i + " String is: " + data.product_name.get(i));
                     i++;
                 }
                 conn.close();
@@ -143,11 +138,7 @@ public class SuperAwesomeCardFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<String> list) {
-            adapter.clear();
-            adapter.addAll(list);
 
-            adapter.notifyDataSetChanged();
-            //handler.sendEmptyMessageDelayed(0, 1000);
         }
 
         @Override
@@ -155,15 +146,4 @@ public class SuperAwesomeCardFragment extends Fragment {
             super.onCancelled();
         }
     }
-
-    public Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-
-            mTask = new MyAsyncTask();
-
-            mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "");
-        }
-    };
 }
