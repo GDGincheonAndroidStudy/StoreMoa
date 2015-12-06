@@ -18,10 +18,8 @@ package com.seunghyo.storemoa;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,20 +28,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.ArrayList;
-
 public class SuperAwesomeCardFragment extends Fragment {
 
     private static final String ARG_POSITION = "position";
-    private PagerAdapter adapter2;
     private int position;
     private boolean DEBUG = true;
     private String TAG = "SUperAwesomeCardFragment";
-    String query;
     Data data = new Data();
 
     public static SuperAwesomeCardFragment newInstance(int position) {
@@ -58,9 +48,6 @@ public class SuperAwesomeCardFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Util.getInstance().printLog(DEBUG, TAG, String.valueOf(data.product_name.size()));
-        if(data.product_name.size() == 0) {
-            new MyAsyncTask().execute();
-        }
         position = getArguments().getInt(ARG_POSITION);
     }
 
@@ -96,54 +83,4 @@ public class SuperAwesomeCardFragment extends Fragment {
         }
     }
 
-    class MyAsyncTask extends AsyncTask<String, Void, ArrayList<String>>
-    {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected ArrayList<String> doInBackground(String... params) {
-
-            query = "select * from cu_price";
-            ArrayList<String> list = new ArrayList<String>();
-
-            ResultSet reset = null;
-            Connection conn = null;
-
-            try {
-                Class.forName("net.sourceforge.jtds.jdbc.Driver");
-                conn = DriverManager.getConnection("jdbc:jtds:sqlserver://117.16.244.162;databaseName=201101633", "201101633", "as871100");
-                Statement stmt = conn.createStatement();
-
-                reset = stmt.executeQuery(query);
-                int i=0;
-                while (reset.next()) {
-                    if (isCancelled()) break;
-                    data.product_name.add(i, reset.getString(1));
-                    data.product_price.add(i, reset.getString(2));
-                    Util.getInstance().printLog(DEBUG, TAG, "number is: " + i + " String is: " + data.product_name.get(i));
-                    i++;
-                }
-                conn.close();
-            } catch (Exception e)
-            {
-                Log.w("Error connection", "" + e.getMessage());
-            }
-
-            return list;
-
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<String> list) {
-
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-        }
-    }
 }
