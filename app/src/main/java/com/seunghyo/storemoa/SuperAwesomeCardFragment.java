@@ -16,7 +16,6 @@
 
 package com.seunghyo.storemoa;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,9 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout.LayoutParams;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -46,288 +43,51 @@ import java.util.ListIterator;
 
 public class SuperAwesomeCardFragment extends Fragment {
 
-	private static final String ARG_POSITION = "position";
+    private static final String ARG_POSITION = "position";
     private PagerAdapter adapter2;
-	private int position;
+    private int position;
+    private boolean DEBUG = true;
+    private String TAG = "SUperAwesomeCardFragment";
     ArrayAdapter<String> adapter;
     MyAsyncTask mTask;
     String query;
 
-    private List<String> product_name = new List<String>() {
-        @Override
-        public void add(int location, String object) {
-
-        }
-
-        @Override
-        public boolean add(String object) {
-            return false;
-        }
-
-        @Override
-        public boolean addAll(int location, Collection<? extends String> collection) {
-            return false;
-        }
-
-        @Override
-        public boolean addAll(Collection<? extends String> collection) {
-            return false;
-        }
-
-        @Override
-        public void clear() {
-
-        }
-
-        @Override
-        public boolean contains(Object object) {
-            return false;
-        }
-
-        @Override
-        public boolean containsAll(Collection<?> collection) {
-            return false;
-        }
-
-        @Override
-        public String get(int location) {
-            return null;
-        }
-
-        @Override
-        public int indexOf(Object object) {
-            return 0;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @NonNull
-        @Override
-        public Iterator<String> iterator() {
-            return null;
-        }
-
-        @Override
-        public int lastIndexOf(Object object) {
-            return 0;
-        }
-
-        @Override
-        public ListIterator<String> listIterator() {
-            return null;
-        }
-
-        @NonNull
-        @Override
-        public ListIterator<String> listIterator(int location) {
-            return null;
-        }
-
-        @Override
-        public String remove(int location) {
-            return null;
-        }
-
-        @Override
-        public boolean remove(Object object) {
-            return false;
-        }
-
-        @Override
-        public boolean removeAll(Collection<?> collection) {
-            return false;
-        }
-
-        @Override
-        public boolean retainAll(Collection<?> collection) {
-            return false;
-        }
-
-        @Override
-        public String set(int location, String object) {
-            return null;
-        }
-
-        @Override
-        public int size() {
-            return 0;
-        }
-
-        @NonNull
-        @Override
-        public List<String> subList(int start, int end) {
-            return null;
-        }
-
-        @NonNull
-        @Override
-        public Object[] toArray() {
-            return new Object[0];
-        }
-
-        @NonNull
-        @Override
-        public <T> T[] toArray(T[] array) {
-            return null;
-        }
-    };
-    private List<String> product_price = new List<String>() {
-        @Override
-        public void add(int location, String object) {
-
-        }
-
-        @Override
-        public boolean add(String object) {
-            return false;
-        }
-
-        @Override
-        public boolean addAll(int location, Collection<? extends String> collection) {
-            return false;
-        }
-
-        @Override
-        public boolean addAll(Collection<? extends String> collection) {
-            return false;
-        }
-
-        @Override
-        public void clear() {
-
-        }
-
-        @Override
-        public boolean contains(Object object) {
-            return false;
-        }
-
-        @Override
-        public boolean containsAll(Collection<?> collection) {
-            return false;
-        }
-
-        @Override
-        public String get(int location) {
-            return null;
-        }
-
-        @Override
-        public int indexOf(Object object) {
-            return 0;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-
-        @NonNull
-        @Override
-        public Iterator<String> iterator() {
-            return null;
-        }
-
-        @Override
-        public int lastIndexOf(Object object) {
-            return 0;
-        }
-
-        @Override
-        public ListIterator<String> listIterator() {
-            return null;
-        }
-
-        @NonNull
-        @Override
-        public ListIterator<String> listIterator(int location) {
-            return null;
-        }
-
-        @Override
-        public String remove(int location) {
-            return null;
-        }
-
-        @Override
-        public boolean remove(Object object) {
-            return false;
-        }
-
-        @Override
-        public boolean removeAll(Collection<?> collection) {
-            return false;
-        }
-
-        @Override
-        public boolean retainAll(Collection<?> collection) {
-            return false;
-        }
-
-        @Override
-        public String set(int location, String object) {
-            return null;
-        }
-
-        @Override
-        public int size() {
-            return 0;
-        }
-
-        @NonNull
-        @Override
-        public List<String> subList(int start, int end) {
-            return null;
-        }
-
-        @NonNull
-        @Override
-        public Object[] toArray() {
-            return new Object[0];
-        }
-
-        @NonNull
-        @Override
-        public <T> T[] toArray(T[] array) {
-            return null;
-        }
-    };
+    ArrayList<String> product_name = new ArrayList<String>();
+    ArrayList<String> product_price = new ArrayList<String>();
 
     public static SuperAwesomeCardFragment newInstance(int position) {
-		SuperAwesomeCardFragment f = new SuperAwesomeCardFragment();
-		Bundle b = new Bundle();
-		b.putInt(ARG_POSITION, position);
-		f.setArguments(b);
-		return f;
-	}
+        SuperAwesomeCardFragment f = new SuperAwesomeCardFragment();
+        Bundle b = new Bundle();
+        b.putInt(ARG_POSITION, position);
+        f.setArguments(b);
+        return f;
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-        handler.sendEmptyMessage(0);
-		position = getArguments().getInt(ARG_POSITION);
-	}
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //handler.sendEmptyMessage(0);
+        position = getArguments().getInt(ARG_POSITION);
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 
-		final View rootView;
+        final View rootView;
 
-		rootView = inflater.inflate(R.layout.main, container, false);
-		rootView.setBackgroundColor(Color.WHITE);
-		ListView listView = (ListView) rootView.findViewById(R.id.list);
-        CustomList customList = new CustomList(getActivity());
-        listView.setAdapter(customList);
+        rootView = inflater.inflate(R.layout.main, container, false);
+        rootView.setBackgroundColor(Color.WHITE);
+        ListView listView = (ListView) rootView.findViewById(R.id.list);
+        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
+        //CustomList customList = new CustomList(getActivity());
+        listView.setAdapter(adapter);
+        new MyAsyncTask().execute();
+        return rootView;
+    }
 
-		return rootView;
-	}
-
-    public class CustomList extends ArrayAdapter<String> {
+    /*public class CustomList extends ArrayAdapter<String> {
 
         private final Activity context;
         public CustomList(Activity context ) {
@@ -346,7 +106,7 @@ public class SuperAwesomeCardFragment extends Fragment {
             price.setText(product_price.get(position));
             return rowView;
         }
-    }
+    }*/
 
     class MyAsyncTask extends AsyncTask<String, Void, ArrayList<String>>
     {
@@ -370,11 +130,13 @@ public class SuperAwesomeCardFragment extends Fragment {
                 Statement stmt = conn.createStatement();
 
                 reset = stmt.executeQuery(query);
-
+                int i=0;
                 while (reset.next()) {
+                    i++;
                     if (isCancelled()) break;
-                    product_name.add(reset.getString(1));
-                    product_price.add(reset.getString(2));
+                    final String str =reset.getString(1) + reset.getString(2);
+                    list.add(str);
+                    Util.getInstance().printLog(DEBUG,TAG,"number is: " + i +" String is: "+ str);
                 }
                 conn.close();
             } catch (Exception e)
@@ -392,7 +154,7 @@ public class SuperAwesomeCardFragment extends Fragment {
             adapter.addAll(list);
 
             adapter.notifyDataSetChanged();
-            handler.sendEmptyMessageDelayed(0, 1000);
+            //handler.sendEmptyMessageDelayed(0, 1000);
         }
 
         @Override
