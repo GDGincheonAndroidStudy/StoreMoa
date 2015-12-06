@@ -54,7 +54,6 @@ public class SuperAwesomeCardFragment extends Fragment {
 
     ArrayList<String> product_name = new ArrayList<String>();
     ArrayList<String> product_price = new ArrayList<String>();
-
     public static SuperAwesomeCardFragment newInstance(int position) {
         SuperAwesomeCardFragment f = new SuperAwesomeCardFragment();
         Bundle b = new Bundle();
@@ -136,12 +135,25 @@ public class SuperAwesomeCardFragment extends Fragment {
                     if (isCancelled()) break;
                     final String str =reset.getString(1) + reset.getString(2);
                     list.add(str);
+                    product_name.add(reset.getString(1));
+                    product_price.add(reset.getString(2));
+
                     Util.getInstance().printLog(DEBUG,TAG,"number is: " + i +" String is: "+ str);
                 }
                 conn.close();
             } catch (Exception e)
             {
                 Log.w("Error connection", "" + e.getMessage());
+            }
+
+            Util.getInstance().printLog(DEBUG,TAG,"Price size is:" + product_name.size());
+            for(int a=0; product_name.size() >a;a++){
+
+                String name = product_name.get(a);
+                String price = product_price.get(a);
+
+                Util.getInstance().printLog(DEBUG,TAG,"Product name :"+ name
+                                                + " Product price:" + price);
             }
 
             return list;
